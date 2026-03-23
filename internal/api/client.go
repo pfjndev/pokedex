@@ -201,7 +201,7 @@ func (c *Client) doRequest(url string, v interface{}) error {
 			Err:     err,
 		}
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	// Read response body
 	body, err := io.ReadAll(resp.Body)

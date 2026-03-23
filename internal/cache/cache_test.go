@@ -37,7 +37,7 @@ func TestSetAndGet(t *testing.T) {
 		t.Fatalf("Failed to create cache: %v", err)
 	}
 
-	defer c.Clear()
+	defer func() { _ = c.Clear() }()
 
 	testData := []byte(`{"id": 1, "name": "Bulbasaur"}`)
 	pokemonName := "bulbasaur"
@@ -79,7 +79,7 @@ func TestHas(t *testing.T) {
 		t.Fatalf("Failed to create cache: %v", err)
 	}
 
-	defer c.Clear()
+	defer func() { _ = c.Clear() }()
 
 	pokemonName := "pikachu"
 	testData := []byte(`{"id": 25, "name": "Pikachu"}`)
@@ -107,7 +107,7 @@ func TestCaseInsensitivity(t *testing.T) {
 		t.Fatalf("Failed to create cache: %v", err)
 	}
 
-	defer c.Clear()
+	defer func() { _ = c.Clear() }()
 
 	testData := []byte(`{"id": 6, "name": "Charizard"}`)
 
@@ -140,7 +140,7 @@ func TestDelete(t *testing.T) {
 		t.Fatalf("Failed to create cache: %v", err)
 	}
 
-	defer c.Clear()
+	defer func() { _ = c.Clear() }()
 
 	pokemonName := "squirtle"
 	testData := []byte(`{"id": 7, "name": "Squirtle"}`)
@@ -179,7 +179,7 @@ func TestList(t *testing.T) {
 		t.Fatalf("Failed to create cache: %v", err)
 	}
 
-	defer c.Clear()
+	defer func() { _ = c.Clear() }()
 
 	// Initially empty
 	list, err := c.List()
@@ -219,7 +219,7 @@ func TestGetCacheStats(t *testing.T) {
 		t.Fatalf("Failed to create cache: %v", err)
 	}
 
-	defer c.Clear()
+	defer func() { _ = c.Clear() }()
 
 	// Check stats on empty cache
 	stats, err := c.GetCacheStats()
@@ -308,7 +308,7 @@ func TestEmptyData(t *testing.T) {
 		t.Fatalf("Failed to create cache: %v", err)
 	}
 
-	defer c.Clear()
+	defer func() { _ = c.Clear() }()
 
 	// Try to set empty data
 	err = c.Set("test", []byte{})
@@ -330,7 +330,7 @@ func TestConcurrentAccess(t *testing.T) {
 		t.Fatalf("Failed to create cache: %v", err)
 	}
 
-	defer c.Clear()
+	defer func() { _ = c.Clear() }()
 
 	done := make(chan bool, 10)
 
@@ -369,7 +369,7 @@ func TestInvalidInput(t *testing.T) {
 		t.Fatalf("Failed to create cache: %v", err)
 	}
 
-	defer c.Clear()
+	defer func() { _ = c.Clear() }()
 
 	// Empty Pokemon name
 	_, err = GetPokemonCachePath("")
