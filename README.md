@@ -1,6 +1,8 @@
 # Pokedex CLI
 
-[![Build Status](https://github.com/pfjndev/pokedex/workflows/CI/badge.svg)](https://github.com/pfjndev/pokedex/actions)
+[![Release](https://github.com/pfjndev/pokedex/actions/workflows/release.yml/badge.svg)](https://github.com/pfjndev/pokedex/actions/workflows/release.yml)
+[![Lint](https://github.com/pfjndev/pokedex/actions/workflows/lint.yml/badge.svg)](https://github.com/pfjndev/pokedex/actions/workflows/lint.yml)
+[![Tests](https://github.com/pfjndev/pokedex/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/pfjndev/pokedex/actions/workflows/test.yml)
 [![Go Version](https://img.shields.io/badge/go-1.21+-blue.svg)](https://golang.org/dl/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/pfjndev/pokedex)](https://goreportcard.com/report/github.com/pfjndev/pokedex)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
