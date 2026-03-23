@@ -144,8 +144,8 @@ func (c *Cache) Clear() error {
 
 // CacheStats holds statistics about the cache
 type CacheStats struct {
-	TotalSize int64 // Total size of all cached files in bytes
-	FileCount int   // Number of cached Pokemon files
+	TotalSize int64  // Total size of all cached files in bytes
+	FileCount int    // Number of cached Pokemon files
 	CacheDir  string // Path to the cache directory
 }
 

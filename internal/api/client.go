@@ -33,11 +33,11 @@ const (
 // Client represents an HTTP client for the PokeAPI.
 // It manages request/response handling, timeouts, and retry logic.
 type Client struct {
-	httpClient  *http.Client
-	baseURL     string
-	timeout     time.Duration
-	maxRetries  int
-	initialBO   time.Duration
+	httpClient *http.Client
+	baseURL    string
+	timeout    time.Duration
+	maxRetries int
+	initialBO  time.Duration
 }
 
 // ClientOption is a functional option for configuring the Client.
@@ -69,8 +69,9 @@ func WithBaseURL(baseURL string) ClientOption {
 // It accepts optional ClientOption arguments to customize the client.
 //
 // Example:
-//   client := NewClient()
-//   client := NewClient(WithTimeout(15 * time.Second), WithMaxRetries(5))
+//
+//	client := NewClient()
+//	client := NewClient(WithTimeout(15 * time.Second), WithMaxRetries(5))
 func NewClient(opts ...ClientOption) *Client {
 	c := &Client{
 		httpClient: &http.Client{
@@ -115,8 +116,9 @@ func (e *APIError) Error() string {
 // - Invalid JSON: Malformed response
 //
 // Example:
-//   pokemon, err := client.GetPokemon("bulbasaur")
-//   pokemon, err := client.GetPokemon("1")
+//
+//	pokemon, err := client.GetPokemon("bulbasaur")
+//	pokemon, err := client.GetPokemon("1")
 func (c *Client) GetPokemon(nameOrID string) (*PokemonResponse, error) {
 	url := fmt.Sprintf("%s/pokemon/%s", c.baseURL, nameOrID)
 	resp := &PokemonResponse{}
@@ -134,8 +136,9 @@ func (c *Client) GetPokemon(nameOrID string) (*PokemonResponse, error) {
 // It returns a PokemonListResponse containing the list of Pokemon or an error if the request fails.
 //
 // Example:
-//   list, err := client.ListPokemon(20, 0)   // First 20 Pokemon
-//   list, err := client.ListPokemon(20, 20)  // Next 20 Pokemon
+//
+//	list, err := client.ListPokemon(20, 0)   // First 20 Pokemon
+//	list, err := client.ListPokemon(20, 20)  // Next 20 Pokemon
 func (c *Client) ListPokemon(limit, offset int) (*PokemonListResponse, error) {
 	url := fmt.Sprintf("%s/pokemon?limit=%d&offset=%d", c.baseURL, limit, offset)
 	resp := &PokemonListResponse{}
