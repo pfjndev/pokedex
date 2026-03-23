@@ -36,7 +36,7 @@ jobs:
         run: go build ./...
       
       - name: Run tests with race detector
-        run: go test -v -race -coverprofile=coverage.out ./...
+        run: go test -v -race -coverprofile=coverage.txt -coverpkg=./... ./...
       
       - name: Run go vet
         run: go vet ./...
@@ -46,5 +46,5 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         with:
           name: coverage
-          path: coverage.out
+          path: coverage.txt
           retention-days: 30
