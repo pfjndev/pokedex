@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Documentation
+    url: https://github.com/pfjndev/pokedex
+    about: Check out the project documentation
+  - name: 💬 Discussions
+    url: https://github.com/pfjndev/pokedex/discussions
+    about: Start a discussion or ask questions
