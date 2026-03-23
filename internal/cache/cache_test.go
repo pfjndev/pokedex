@@ -335,7 +335,7 @@ func TestConcurrentAccess(t *testing.T) {
 	done := make(chan bool, 10)
 
 	// Launch multiple goroutines doing concurrent operations
-	for i := 0; i < 5; i++ {
+	for i := range 5 {
 		go func(id int) {
 			pokemonName := "pokemon" + string(rune('a'+id))
 			testData := []byte(`{"id": ` + string(rune('0'+id)) + `}`)
@@ -357,7 +357,7 @@ func TestConcurrentAccess(t *testing.T) {
 	}
 
 	// Wait for all goroutines
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		<-done
 	}
 }

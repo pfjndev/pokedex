@@ -153,7 +153,7 @@ func (c *Client) ListPokemon(limit, offset int) (*PokemonListResponse, error) {
 // doRequestWithRetry performs an HTTP GET request with exponential backoff retry logic.
 // It automatically retries on transient failures (5xx, rate limiting 429, timeouts, etc).
 // The maxAttempts is determined by c.maxRetries.
-func (c *Client) doRequestWithRetry(url string, v interface{}) error {
+func (c *Client) doRequestWithRetry(url string, v any) error {
 	var lastErr error
 
 	for attempt := 0; attempt <= c.maxRetries; attempt++ {
@@ -184,7 +184,7 @@ func (c *Client) doRequestWithRetry(url string, v interface{}) error {
 
 // doRequest performs a single HTTP GET request and unmarshals the JSON response.
 // It adds proper headers and handles various error conditions.
-func (c *Client) doRequest(url string, v interface{}) error {
+func (c *Client) doRequest(url string, v any) error {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return &APIError{
@@ -264,7 +264,7 @@ func (c *Client) handleErrorStatus(statusCode int, body []byte) error {
 	// Try to include response body if available
 	if len(body) > 0 {
 		// Attempt to parse error details if the API returned JSON
-		var errData map[string]interface{}
+		var errData map[string]any
 		if err := json.Unmarshal(body, &errData); err == nil {
 			if detail, ok := errData["detail"].(string); ok {
 				message = detail
@@ -283,12 +283,9 @@ func (c *Client) handleErrorStatus(statusCode int, body []byte) error {
 // Jitter helps prevent thundering herd problem when multiple clients retry simultaneously.
 func (c *Client) calculateBackoff(attempt int) time.Duration {
 	// Calculate exponential backoff: 2^attempt
-	backoff := c.initialBO * time.Duration(math.Pow(2, float64(attempt)))
-
-	// Cap at MaxBackoff
-	if backoff > MaxBackoff {
-		backoff = MaxBackoff
-	}
+	backoff := min(
+		// Cap at MaxBackoff
+		c.initialBO*time.Duration(math.Pow(2, float64(attempt))), MaxBackoff)
 
 	// Add random jitter (±10% of backoff duration)
 	jitter := time.Duration(rand.Int63n(int64(backoff / 5)))
