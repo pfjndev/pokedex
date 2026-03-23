@@ -36,17 +36,19 @@ jobs:
         run: go build ./...
       
       - name: Run tests with race detector
-        run: |
-          mkdir -p coverage
-          go test -v -race -coverprofile=./coverage/coverage.out ./...
+        run: go test -v -race ./...
       
       - name: Run go vet
         run: go vet ./...
+      
+      - name: Generate coverage report
+        if: matrix.os == 'ubuntu-latest'
+        run: go test -coverprofile=coverage.out -covermode=atomic ./...
       
       - name: Upload coverage artifacts
         uses: actions/upload-artifact@v6
         if: matrix.os == 'ubuntu-latest'
         with:
           name: coverage
-          path: ./coverage/coverage.out
+          path: coverage.out
           retention-days: 30
