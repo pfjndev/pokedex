@@ -4,9 +4,21 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '**/*.go'
+      - 'go.mod'
+      - 'go.sum'
+      - 'Makefile'
+      - '.github/workflows/test.yml'
   pull_request:
     branches:
       - main
+    paths:
+      - '**/*.go'
+      - 'go.mod'
+      - 'go.sum'
+      - 'Makefile'
+      - '.github/workflows/test.yml'
 
 permissions:
   contents: read
