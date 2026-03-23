@@ -1,0 +1,50 @@
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Test binaries
+*.test
+*.out
+
+# Go workspace files
+go.work
+go.work.sum
+
+# Binaries built by go
+/bin/
+/dist/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# OS specific files
+.DS_Store
+Thumbs.db
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Vendor directory
+/vendor/
+
+# Local cache and build directories
+.cache/
+.build/
+*.o
+*.a
+
+# Dependency files (if using go modules)
+go.mod.bak
+go.sum.bak
