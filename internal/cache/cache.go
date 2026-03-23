@@ -54,7 +54,7 @@ func (c *Cache) Set(nameOrID string, data []byte) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	if data == nil || len(data) == 0 {
+	if len(data) == 0 {
 		return fmt.Errorf("data cannot be empty")
 	}
 
@@ -77,20 +77,20 @@ func (c *Cache) Set(nameOrID string, data []byte) error {
 
 	// Write data to temp file
 	if _, err := tempFile.Write(data); err != nil {
-		tempFile.Close()
-		os.Remove(tempPath)
+		_ = tempFile.Close()
+		_ = os.Remove(tempPath)
 		return fmt.Errorf("failed to write to temporary file: %w", err)
 	}
 
 	// Close the temp file before renaming
 	if err := tempFile.Close(); err != nil {
-		os.Remove(tempPath)
+		_ = os.Remove(tempPath)
 		return fmt.Errorf("failed to close temporary file: %w", err)
 	}
 
 	// Atomically rename temp file to actual cache file
 	if err := os.Rename(tempPath, filePath); err != nil {
-		os.Remove(tempPath)
+		_ = os.Remove(tempPath)
 		return fmt.Errorf("failed to write cache file for %q: %w", nameOrID, err)
 	}
 
