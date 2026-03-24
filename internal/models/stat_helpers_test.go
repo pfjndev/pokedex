@@ -1,7 +1,8 @@
 package models
 
 import (
-"testing"
+	"math"
+	"testing"
 )
 
 func TestGetStatByName(t *testing.T) {
@@ -55,20 +56,20 @@ Stats: []*Stat{
 // Test HP percentage
 percent := pikachu.GetStatPercentage("hp")
 expected := (35.0 / 255.0) * 100.0
-if percent != expected {
+if math.Abs(percent-expected) > 1e-9 {
 t.Fatalf("Expected %.2f%%, got %.2f%%", expected, percent)
 }
 
 // Test Speed percentage
 percent = pikachu.GetStatPercentage("speed")
 expected = (90.0 / 255.0) * 100.0
-if percent != expected {
+if math.Abs(percent-expected) > 1e-9 {
 t.Fatalf("Expected %.2f%%, got %.2f%%", expected, percent)
 }
 
 // Test max value
 percent = pikachu.GetStatPercentage("defense")
-if percent != 100.0 {
+if math.Abs(percent-100.0) > 1e-9 {
 t.Fatalf("Expected 100%%, got %.2f%%", percent)
 }
 
