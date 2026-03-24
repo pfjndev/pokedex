@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // Type badge styles with colors matching Pokemon types
@@ -56,9 +58,9 @@ func RenderTypeBadge(typeName, color string) string {
 		symbol = "●"
 	}
 
-	badgeText := fmt.Sprintf("%s %s", symbol, strings.Title(typeName))
+	badgeText := fmt.Sprintf("%s %s", symbol, cases.Title(language.English).String(typeName))
 	
-	style := typeBadgeStyle.Copy()
+	style := typeBadgeStyle
 	if color != "" {
 		style = style.Foreground(lipgloss.Color(color))
 	}
