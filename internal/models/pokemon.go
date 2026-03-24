@@ -6,6 +6,7 @@ package models
 import (
 	"fmt"
 	"math"
+	"strings"
 )
 
 // Pokemon represents a single Pokemon with all its details.
@@ -535,4 +536,259 @@ func (p *Pokemon) IsBalanced() bool {
 //	specialized := pokemon.IsSpecialized() // true for Alakazam (high Sp. Atk)
 func (p *Pokemon) IsSpecialized() bool {
 	return p.StatStandardDeviation() > 30
+}
+
+// HasSprite returns true if sprite data is available for this Pokemon.
+//
+// Example:
+//
+//	if pokemon.HasSprite() {
+//	    url := pokemon.GetSpriteURL()
+//	}
+func (p *Pokemon) HasSprite() bool {
+	return p != nil && p.Sprites != nil && p.Sprites.FrontDefault != ""
+}
+
+// GetSpriteURL returns the front_default sprite URL for this Pokemon.
+// Returns empty string if sprite data is not available.
+//
+// Example:
+//
+//	url := pokemon.GetSpriteURL()
+//	// "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
+func (p *Pokemon) GetSpriteURL() string {
+	if p == nil || p.Sprites == nil {
+		return ""
+	}
+	return p.Sprites.FrontDefault
+}
+
+// GetSpriteASCII returns a simple ASCII art representation of the Pokemon.
+// This is a placeholder implementation using Unicode box drawing and block elements.
+// The sprite is a fixed 10x5 character representation.
+//
+// Example:
+//
+//	ascii := pokemon.GetSpriteASCII()
+//	fmt.Println(ascii)
+func (p *Pokemon) GetSpriteASCII() string {
+	if p == nil {
+		return emptySprite()
+	}
+
+	// Get the primary type to determine the sprite pattern
+	primaryType := p.PrimaryType()
+	firstLetter := "?"
+	if p.Name != "" && len(p.Name) > 0 {
+		firstLetter = string(p.Name[0])
+	}
+
+	// Create type-specific ASCII art patterns
+	switch primaryType {
+	case "electric":
+		return electricSprite(firstLetter)
+	case "fire":
+		return fireSprite(firstLetter)
+	case "water":
+		return waterSprite(firstLetter)
+	case "grass":
+		return grassSprite(firstLetter)
+	case "ice":
+		return iceSprite(firstLetter)
+	case "psychic":
+		return psychicSprite(firstLetter)
+	case "dragon":
+		return dragonSprite(firstLetter)
+	case "ghost":
+		return ghostSprite(firstLetter)
+	default:
+		return defaultSprite(firstLetter)
+	}
+}
+
+// emptySprite returns an empty 10x5 sprite for nil Pokemon.
+func emptySprite() string {
+	return "          \n" +
+		"          \n" +
+		"    ??    \n" +
+		"          \n" +
+		"          "
+}
+
+// electricSprite creates a lightning bolt pattern for Electric type.
+func electricSprite(letter string) string {
+	return "   ⚡⚡⚡   \n" +
+		"  ⚡█⚡█⚡  \n" +
+		"  ⚡ " + letter + " ⚡  \n" +
+		"  ⚡█⚡█⚡  \n" +
+		"   ⚡⚡⚡   "
+}
+
+// fireSprite creates a flame pattern for Fire type.
+func fireSprite(letter string) string {
+	return "   ▓▓▓    \n" +
+		"  ▓███▓   \n" +
+		"  ▓ " + letter + " ▓   \n" +
+		"  ▓███▓   \n" +
+		"   ▓▓▓    "
+}
+
+// waterSprite creates a wave pattern for Water type.
+func waterSprite(letter string) string {
+	return "  ≈≈≈≈≈   \n" +
+		" ≈█████≈  \n" +
+		" ≈  " + letter + "  ≈  \n" +
+		" ≈█████≈  \n" +
+		"  ≈≈≈≈≈   "
+}
+
+// grassSprite creates a leaf pattern for Grass type.
+func grassSprite(letter string) string {
+	return "   ❀❀❀    \n" +
+		"  ❀███❀   \n" +
+		"  ❀ " + letter + " ❀   \n" +
+		"  ❀███❀   \n" +
+		"   ❀❀❀    "
+}
+
+// iceSprite creates a crystal pattern for Ice type.
+func iceSprite(letter string) string {
+	return "   ❄❄❄    \n" +
+		"  ❄▓▓▓❄   \n" +
+		"  ❄ " + letter + " ❄   \n" +
+		"  ❄▓▓▓❄   \n" +
+		"   ❄❄❄    "
+}
+
+// psychicSprite creates a mystical pattern for Psychic type.
+func psychicSprite(letter string) string {
+	return "   ◉◉◉    \n" +
+		"  ◉░░░◉   \n" +
+		"  ◉ " + letter + " ◉   \n" +
+		"  ◉░░░◉   \n" +
+		"   ◉◉◉    "
+}
+
+// dragonSprite creates a scale pattern for Dragon type.
+func dragonSprite(letter string) string {
+	return "   ◆◆◆    \n" +
+		"  ◆███◆   \n" +
+		"  ◆ " + letter + " ◆   \n" +
+		"  ◆███◆   \n" +
+		"   ◆◆◆    "
+}
+
+// ghostSprite creates a spooky pattern for Ghost type.
+func ghostSprite(letter string) string {
+	return "   ▒▒▒    \n" +
+		"  ▒░░░▒   \n" +
+		"  ▒ " + letter + " ▒   \n" +
+		"  ▒░░░▒   \n" +
+		"   ▒▒▒    "
+}
+
+// defaultSprite creates a generic pattern for other types.
+func defaultSprite(letter string) string {
+	return "   ███    \n" +
+		"  █████   \n" +
+		"  █ " + letter + " █   \n" +
+		"  █████   \n" +
+		"   ███    "
+}
+
+// GetStatByName returns the stat with the given name, or nil if not found.
+// Comparison is case-insensitive.
+//
+// Example:
+//
+//	hpStat := pokemon.GetStatByName("hp")
+//	if hpStat != nil {
+//	    fmt.Printf("HP: %d\n", hpStat.BaseValue)
+//	}
+func (p *Pokemon) GetStatByName(statName string) *Stat {
+	if p == nil || len(p.Stats) == 0 {
+		return nil
+	}
+
+	lowerName := strings.ToLower(statName)
+	for _, stat := range p.Stats {
+		if stat != nil && strings.ToLower(stat.Name) == lowerName {
+			return stat
+		}
+	}
+	return nil
+}
+
+// GetStatPercentage returns the stat value as a percentage (0-100).
+// Uses 255 as the maximum base stat value (Pokemon max).
+// Returns 0.0 if stat not found.
+//
+// Example:
+//
+//	percent := pokemon.GetStatPercentage("hp")
+//	// 45/255 * 100 ≈ 17.65%
+func (p *Pokemon) GetStatPercentage(statName string) float64 {
+	stat := p.GetStatByName(statName)
+	if stat == nil {
+		return 0.0
+	}
+	// Maximum base stat across all Pokemon stats is 255
+	return (float64(stat.BaseValue) / 255.0) * 100.0
+}
+
+// GetStatColor returns a color code based on the stat value.
+// Low (0-85): Red "#E74C3C"
+// Medium (86-170): Yellow "#F39C12"
+// High (171-255): Green "#27AE60"
+//
+// Example:
+//
+//	color := pokemon.GetStatColor(45)  // "#E74C3C" (red)
+//	color := pokemon.GetStatColor(100) // "#F39C12" (yellow)
+//	color := pokemon.GetStatColor(200) // "#27AE60" (green)
+func (p *Pokemon) GetStatColor(value int) string {
+	if value >= 171 {
+		return "#27AE60" // Green
+	}
+	if value >= 86 {
+		return "#F39C12" // Yellow
+	}
+	return "#E74C3C" // Red
+}
+
+// GetTotalStats returns the sum of all base stat values.
+// Higher total stats indicate stronger Pokemon overall.
+//
+// Example:
+//
+//	total := pokemon.GetTotalStats() // e.g., 318
+func (p *Pokemon) GetTotalStats() int {
+	return p.TotalStats()
+}
+
+// GetAverageStatPercentage calculates the average of all stats as a percentage.
+// Based on 255 max per stat.
+//
+// Example:
+//
+//	avgPercent := pokemon.GetAverageStatPercentage() // e.g., 20.78%
+func (p *Pokemon) GetAverageStatPercentage() float64 {
+	if p == nil || len(p.Stats) == 0 {
+		return 0.0
+	}
+
+	total := 0.0
+	count := 0
+	for _, stat := range p.Stats {
+		if stat != nil {
+			percentage := (float64(stat.BaseValue) / 255.0) * 100.0
+			total += percentage
+			count++
+		}
+	}
+
+	if count == 0 {
+		return 0.0
+	}
+	return total / float64(count)
 }
