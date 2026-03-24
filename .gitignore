@@ -17,6 +17,8 @@ go.work.sum
 # Binaries built by go
 /bin/
 /dist/
+pokedex
+coverage.out
 
 # IDE specific files
 .vscode/
