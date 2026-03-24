@@ -6,6 +6,8 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/pfjndev/pokedex/internal/models"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // Styles
@@ -168,7 +170,7 @@ func (m Model) renderSearch() string {
 		} else if m.searchCount == 1 && len(m.searchMatches) == 1 {
 			// Single match - show preview with ID lookup
 			pokemon := m.searchMatches[0]
-			name := strings.Title(pokemon.Name)
+			name := cases.Title(language.English).String(pokemon.Name)
 			b.WriteString("\n")
 			b.WriteString(selectedMenuItemStyle.Render(fmt.Sprintf("Found: %s", name)))
 			b.WriteString(helpStyle.Render(" (press Enter)"))
@@ -178,7 +180,7 @@ func (m Model) renderSearch() string {
 			b.WriteString(selectedMenuItemStyle.Render(fmt.Sprintf("Found %d matches:", m.searchCount)))
 			b.WriteString("\n")
 			for i, pokemon := range m.searchMatches {
-				name := strings.Title(pokemon.Name)
+				name := cases.Title(language.English).String(pokemon.Name)
 				b.WriteString(menuItemStyle.Render(fmt.Sprintf("  • %s", name)))
 				if i < len(m.searchMatches)-1 {
 					b.WriteString("\n")
@@ -210,7 +212,7 @@ func (m Model) renderList() string {
 		// Show current page info
 		start := m.listOffset + 1
 		end := m.listOffset + len(m.pokemonList)
-		b.WriteString(fmt.Sprintf("Showing %d-%d of %d\n\n", start, end, m.totalCount))
+		fmt.Fprintf(&b, "Showing %d-%d of %d\n\n", start, end, m.totalCount)
 
 		// Render list items
 		visibleStart := 0
@@ -238,7 +240,7 @@ func (m Model) renderList() string {
 
 		for i := visibleStart; i < visibleEnd; i++ {
 			pokemon := m.pokemonList[i]
-			line := fmt.Sprintf("%d. %s", m.listOffset+i+1, strings.Title(pokemon.Name))
+			line := fmt.Sprintf("%d. %s", m.listOffset+i+1, cases.Title(language.English).String(pokemon.Name))
 
 			if i == m.cursor {
 				b.WriteString(selectedMenuItemStyle.Render("▸ " + line))
@@ -282,18 +284,18 @@ func (m Model) renderDetails() string {
 	}
 
 	pokemon, ok := m.pokemonDetails.(*models.Pokemon)
-	if !ok {
+	if !ok || pokemon == nil {
 		return "Invalid Pokemon data."
 	}
 
 	// Title
-	name := strings.Title(pokemon.Name)
+	name := cases.Title(language.English).String(pokemon.Name)
 	b.WriteString(pokemonNameStyle.Render(fmt.Sprintf("#%d %s", pokemon.ID, name)))
 	b.WriteString("\n\n")
 
 	// Display ASCII sprite if available (with defensive error handling)
 	// Only show sprite section if HasSprite check passes
-	if pokemon != nil && pokemon.HasSprite() {
+	if pokemon.HasSprite() {
 		asciiArt := pokemon.GetSpriteASCII()
 		if asciiArt != "" {
 			b.WriteString("\n")
@@ -319,7 +321,7 @@ func (m Model) renderDetails() string {
 		typeNames := make([]string, 0, len(pokemon.Types))
 		for _, t := range pokemon.Types {
 			if t != nil {
-				typeNames = append(typeNames, strings.Title(t.Name))
+				typeNames = append(typeNames, cases.Title(language.English).String(t.Name))
 			}
 		}
 		if len(typeNames) > 0 {
@@ -331,12 +333,10 @@ func (m Model) renderDetails() string {
 	// Physical characteristics
 	b.WriteString(sectionStyle.Render(fmt.Sprintf("Height: %s", pokemon.FormattedHeight())))
 	b.WriteString("\n")
-	b.WriteString(fmt.Sprintf("Weight: %s", pokemon.FormattedWeight()))
-	b.WriteString("\n")
+	fmt.Fprintf(&b, "Weight: %s\n", pokemon.FormattedWeight())
 
 	if pokemon.BaseExperience > 0 {
-		b.WriteString(fmt.Sprintf("Base Experience: %d", pokemon.BaseExperience))
-		b.WriteString("\n")
+		fmt.Fprintf(&b, "Base Experience: %d\n", pokemon.BaseExperience)
 	}
 
 	// Abilities
@@ -344,7 +344,7 @@ func (m Model) renderDetails() string {
 		b.WriteString(sectionStyle.Render("\nAbilities:"))
 		b.WriteString("\n")
 		for _, ability := range pokemon.Abilities {
-			name := strings.Title(strings.ReplaceAll(ability.Name, "-", " "))
+			name := cases.Title(language.English).String(strings.ReplaceAll(ability.Name, "-", " "))
 			if ability.IsHidden {
 				name += " (Hidden)"
 			}
@@ -357,7 +357,7 @@ func (m Model) renderDetails() string {
 		b.WriteString(sectionStyle.Render("\nBase Stats:"))
 		b.WriteString("\n")
 		for _, stat := range pokemon.Stats {
-			name := strings.Title(strings.ReplaceAll(stat.Name, "-", " "))
+			name := cases.Title(language.English).String(strings.ReplaceAll(stat.Name, "-", " "))
 
 			// Create a simple stat bar
 			barLength := 20
@@ -367,7 +367,7 @@ func (m Model) renderDetails() string {
 			}
 			bar := strings.Repeat("█", filledLength) + strings.Repeat("░", barLength-filledLength)
 
-			b.WriteString(fmt.Sprintf("  %-18s %3d %s\n", name+":", stat.BaseValue, statBarStyle.Render(bar)))
+			fmt.Fprintf(&b, "  %-18s %3d %s\n", name+":", stat.BaseValue, statBarStyle.Render(bar))
 		}
 	}
 

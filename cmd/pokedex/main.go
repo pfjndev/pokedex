@@ -15,7 +15,6 @@ import (
 var (
 	version   = "dev"
 	showVer   = flag.Bool("version", false, "Show version information")
-	cacheDir  = flag.String("cache-dir", "", "Custom cache directory (default: ~/.cache/pokedex)")
 	noCache   = flag.Bool("no-cache", false, "Disable caching")
 )
 
