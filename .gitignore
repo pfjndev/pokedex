@@ -50,3 +50,8 @@ ehthumbs.db
 # Dependency files (if using go modules)
 go.mod.bak
 go.sum.bak
+
+# AI-targeted documentation (exclude from repo)
+.cline*/*
+docs/.ai/*
+*.context
